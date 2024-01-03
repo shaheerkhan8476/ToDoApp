@@ -9,7 +9,11 @@ import Foundation
 import SwiftUI
 struct TaskView: View {
     @Bindable var task: Task
-    @State private var userInput: String = ""
+    @State private var addTag: Tag?
+    @State var tags: [Tag] = []
+    @State private var tagName: String = ""
+    @State private var bgColor: Color = .red
+    let setColor: Color = .red
     var body: some View {
         
         HStack{
@@ -27,40 +31,54 @@ struct TaskView: View {
             VStack{
                 
                 TextField("Enter Your Task", text: $task.name)
-                
                 HStack{
-                    Button(action: {
-                        if task.tags.count <= 2 {
-                            let newTag = Tag(name: userInput)
-                            task.tags.append(newTag)
-                            userInput = ""
-                        }
-                    }, label: {
-                        Text("Hello")
-                    })
-                    if task.tags.count > 0 {
-                        
-                        ForEach (task.tags) { tag in
+                    ForEach(tags) { tag in
                         ZStack{
                             
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(.secondary.opacity(0.5))
-                                Text(tag.name)
-                                Divider()
-                            }
-                            
+                            Text(tag.name)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(bgColor)
+                                .foregroundColor(.white)
+                                .font(.caption)
+                                .cornerRadius(15)
                         }
                     }
+                    
                 }
+                
+                Button {
+                    addTag = Tag(name: "Test")
+                } label: {
+                    Text("add tag")
+                }
+                .sheet(item: $addTag) { tag in
+                    TextField("Enter your Tag Name", text:$tagName)
+                        .padding()
+                    ColorPicker("Pick a Color", selection: $bgColor)
+                        .padding()
+                    VStack {
+                        Button {
+                            let tag = Tag(name: tagName)
+                            tags.append(tag)
+                            addTag = nil
+                                                    } label: {
+                            Text("Save Tag")
+                        }
+                    }
+                    .presentationDetents([.fraction(0.25)])
+                    .padding()
+                }
+                
+                
             }
+            
         }
-        .padding()
         
-        
-        
-    
     }
-}
+
+    }
+
 
 #Preview {
     @State var taskobject = Task(isChecked: false, name: "", tags: [])
