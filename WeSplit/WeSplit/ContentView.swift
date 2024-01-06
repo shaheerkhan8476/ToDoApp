@@ -13,7 +13,7 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var searchText = ""
     @Query private var tasks: [Task] = []
-
+    @Query private var tags: [Tag] = []
     var searchResults: [Task] {
         if searchText.isEmpty {
             return tasks

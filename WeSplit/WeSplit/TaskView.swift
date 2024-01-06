@@ -8,10 +8,10 @@
 import Foundation
 import SwiftUI
 struct TaskView: View {
+    @Environment(\.modelContext) private var modelContext
     @Bindable var task: Task
     @State private var addTag: Tag?
-    @State var tags: [Tag] = []
-    @State private var tagName: String = ""
+    @State var tagName: String = ""
     @State private var bgColor: Color = .red
     let setColor: Color = .red
     var body: some View {
@@ -32,7 +32,7 @@ struct TaskView: View {
                 
                 TextField("Enter Your Task", text: $task.name)
                 HStack{
-                    ForEach(tags) { tag in
+                    ForEach(task.tags) { tag in
                         ZStack{
                             
                             Text(tag.name)
@@ -60,7 +60,8 @@ struct TaskView: View {
                     VStack {
                         Button {
                             let tag = Tag(name: tagName)
-                            tags.append(tag)
+                            task.tags.append(tag)
+                            modelContext.insert(tag)
                             addTag = nil
                                                     } label: {
                             Text("Save Tag")
@@ -82,6 +83,5 @@ struct TaskView: View {
 
 #Preview {
     @State var taskobject = Task(isChecked: false, name: "", tags: [])
-    
     return TaskView(task: taskobject)
 }
